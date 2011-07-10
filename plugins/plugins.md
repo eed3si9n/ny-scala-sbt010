@@ -38,6 +38,10 @@
     }
 
 !SLIDE
+## 0.7 plugins
+![uml](plugins/sbt0.7pluginsUML.png)
+
+!SLIDE
 ## 0.10 plugins
 
 in project/plugins/built.sbt
@@ -45,8 +49,6 @@ in project/plugins/built.sbt
     libraryDependencies += "com.eed3si9n" %%
       "sbt-assembly" % "0.2"
 
-
-
-
-    
-
+!SLIDE
+## 0.10 plugins
+![plugins k-v](plugins/sbt0.10plugins.png)
