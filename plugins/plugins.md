@@ -52,3 +52,12 @@ in project/plugins/built.sbt
 !SLIDE
 ## 0.10 plugins
 ![plugins k-v](plugins/sbt0.10plugins.png)
+
+!SLIDE
+## 0.10 plugins
+![plugins k-v](plugins/sbt0.10plugins2.png)
+
+!SLIDE
+## 0.10 plugins
+![plugins k-v](plugins/sbt0.10plugins3.png)
+
