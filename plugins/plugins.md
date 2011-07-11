@@ -142,9 +142,11 @@ AssemblyPlugin.scala
 
 - no `assembly` prefix here
 - reuse predefined [Keys][2] (`name`, `test`, ...)
+- no more Path. use [sbt.File][3] (pimps to `RichFile`)
 
   [1]: http://harrah.github.com/xsbt/latest/api/sbt/SettingKey.html
-  [2]: http://harrah.github.com/xsbt/latest/api/sbt/Keys.html
+  [2]: http://harrah.github.com/xsbt/latest/api/sbt/Keys$.html
+  [3]: http://harrah.github.com/xsbt/latest/api/sbt/RichFile.html
 
 !SLIDE
 ## step 7: scope the keys
