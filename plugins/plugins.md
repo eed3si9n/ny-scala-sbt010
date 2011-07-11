@@ -17,13 +17,13 @@
   
 !SLIDE
 
-- sbt-idea
-- xsbt-web-plugin
-- sbt-appengine
-- sbt-assembly
-- posterous-sbt
-- coffeescripted-sbt
-- sbt-sh 
+- [mpeltonen/sbt-idea](https://github.com/mpeltonen/sbt-idea/tree/sbt-0.10)
+- [siasia/xsbt-web-plugin](https://github.com/siasia/xsbt-web-plugin)
+- [eed3si9n/sbt-appengine](https://github.com/eed3si9n/sbt-appengine)
+- [eed3si9n/sbt-assembly](https://github.com/eed3si9n/sbt-assembly)
+- [softprops/coffeescripted-sbt](https://github.com/softprops/coffeescripted-sbt)
+- [n8han/posterous-sbt](https://github.com/n8han/posterous-sbt/tree/sbt0.10)
+- [steppenwells/sbt-sh](https://github.com/steppenwells/sbt-sh)
 
 !SLIDE
 ## using 0.7 plugins
@@ -145,6 +145,87 @@ AssemblyPlugin.scala
 
   [1]: http://harrah.github.com/xsbt/latest/api/sbt/SettingKey.html
   [2]: http://harrah.github.com/xsbt/latest/api/sbt/Keys.html
-  
 
+!SLIDE
+## step 7: scope the keys
+
+    override lazy val settings = inConfig(Assembly)(Seq(
+      assembly <<= packageBin.identity,
+      packageBin <<= assemblyTask,
+      jarName <<= (name, version) { (name, version) => 
+        name + "-assembly-" + version + ".jar" },
+      outputPath <<= (target, jarName) { (t, s) => t / s },
+      test <<= (test in Test).identity,
+    )) ++
+    Seq(
+      assembly <<= (assembly in Assembly).identity
+    )
+
+!SLIDE
+## you are here
+![plugins k-v](plugins/sbt0.10plugins3.png)
+
+!SLIDE
+## why scope?!
+
+!SLIDE
+## why scope?!
+1. no `assembly-` prefixing the keys
+2. reuse existing keys (`name`, `test`, ...)
+3. override keys without affecting other tasks
+
+    <pre>> set test in Assembly := {}</pre>
+
+!SLIDE
+## why scope?!
+1. no `assembly-` prefixing the keys
+2. reuse existing keys (`name`, `test`, ...)
+3. override keys without affecting other tasks
+
+    <pre>> set test in Assembly := {}</pre>
+
+## => better modularity
+
+!SLIDE
+also, what was up with 
+
+      packageBin <<= assemblyTask,
+
+??
+
+!SLIDE
+## step 8: the task (style 1)
+declare deps inside `Seq()`:
+
+    private assemblyTask(d1: X1, d2: X2, d3: X3,
+        d4: X4, d5: X5, d6: X6): File = {
+      // returns File
+    }
+    
+    override lazy val settings = inConfig(Assembly)(Seq(
+      assembly <<= packageBin.identity,
+      packageBin <<= (D1, D2, D3, D4, D5, D6) map {
+        (d1, d2, d3, d4, d5, d6) =>
+          assemblyTask(d1, d2, d3, d4, d5, d6)
+      } 
+    )) ++
+
+!SLIDE
+## step 8: the task (style 2)
+declare deps outside `Seq()`:
+
+    private assemblyTask: Initialize[Task[File]] =
+      (D1, D2, D3, D4, D5, D6) map {
+        (d1, d2, d3, d4, d5, d6) =>
+        // returns File
+      }      
+    
+    override lazy val settings = inConfig(Assembly)(Seq(
+      assembly <<= packageBin.identity,
+      packageBin <<= assemblyTask 
+    )) ++
+
+!SLIDE
+## step 9: publish-local
+plugins are library loaded into the build.
 
