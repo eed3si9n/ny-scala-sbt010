@@ -4,6 +4,12 @@
 - helps migration
 
 !SLIDE
+# sbt 0.10
+
+"scoped k-v of dependencies"<br>
+doesn't make much sense until you use it.
+
+!SLIDE
 # plugins
 > a way to use external code in a build definition
 
@@ -24,6 +30,7 @@
 - [softprops/coffeescripted-sbt](https://github.com/softprops/coffeescripted-sbt)
 - [n8han/posterous-sbt](https://github.com/n8han/posterous-sbt/tree/sbt0.10)
 - [steppenwells/sbt-sh](https://github.com/steppenwells/sbt-sh)
+- [and many more](https://github.com/harrah/xsbt/wiki/sbt-0.10-plugins-list)
 
 !SLIDE
 ## using 0.7 plugins
@@ -140,13 +147,10 @@ AssemblyPlugin.scala
       val outputPath = SettingKey[File]("output-path")
       ...
 
-- no `assembly` prefix here
-- reuse predefined [Keys][2] (`name`, `test`, ...)
-- no more Path. use [sbt.File][3] (pimps to `RichFile`)
+- no more Path. use [sbt.File][2] (pimps to `RichFile`)
 
   [1]: http://harrah.github.com/xsbt/latest/api/sbt/SettingKey.html
-  [2]: http://harrah.github.com/xsbt/latest/api/sbt/Keys$.html
-  [3]: http://harrah.github.com/xsbt/latest/api/sbt/RichFile.html
+  [2]: http://harrah.github.com/xsbt/latest/api/sbt/RichFile.html
 
 !SLIDE
 ## step 7: scope the keys
@@ -170,23 +174,59 @@ AssemblyPlugin.scala
 !SLIDE
 ## why scope?!
 
-!SLIDE
-## why scope?!
-1. no `assembly-` prefixing the keys
-2. reuse existing keys (`name`, `test`, ...)
-3. override keys without affecting other tasks
-
-    <pre>> set test in Assembly := {}</pre>
 
 !SLIDE
 ## why scope?!
 1. no `assembly-` prefixing the keys
-2. reuse existing keys (`name`, `test`, ...)
+
+before:
+
+    def assemblyOutputPath = outputPath / assemblyJarName
+    def assemblyJarName = name + "-assembly-" + this.version + ".jar"
+
+after:
+
+    val outputPath = SettingKey[File]("output-path")  
+    val jarName    = SettingKey[String]("jar-name")
+
+!SLIDE
+## why scope?!
+1. no `assembly-` prefixing the keys
+2. reuse existing [keys][2] (`name`, `test`, ...)
 3. override keys without affecting other tasks
 
+    <pre>> set jarName in Assembly := "foo.jar"</pre>
     <pre>> set test in Assembly := {}</pre>
 
+  [2]: http://harrah.github.com/xsbt/latest/api/sbt/Keys$.html
+
+!SLIDE
+## why scope?!
+1. no `assembly-` prefixing the keys
+2. reuse existing [keys][2] (`name`, `test`, ...)
+3. override keys without affecting other tasks
+
+    <pre>> set jarName in Assembly := "foo.jar"</pre>
+    <pre>> set test in Assembly := {}</pre>
+
+  [2]: http://harrah.github.com/xsbt/latest/api/sbt/Keys$.html
+  
 ## => better modularity
+
+!SLIDE
+can I see the code again?
+
+    override lazy val settings = inConfig(Assembly)(Seq(
+      assembly <<= packageBin.identity,
+      packageBin <<= assemblyTask,
+      jarName <<= (name, version) { (name, version) => 
+        name + "-assembly-" + version + ".jar" },
+      outputPath <<= (target, jarName) { (t, s) => t / s },
+      test <<= (test in Test).identity,
+    )) ++
+    Seq(
+      assembly <<= (assembly in Assembly).identity
+    )
 
 !SLIDE
 also, what was up with 
@@ -199,7 +239,7 @@ also, what was up with
 ## step 8: the task (style 1)
 declare deps inside `Seq()`:
 
-    private assemblyTask(d1: X1, d2: X2, d3: X3,
+    private def assemblyTask(d1: X1, d2: X2, d3: X3,
         d4: X4, d5: X5, d6: X6): File = {
       // returns File
     }
@@ -216,7 +256,7 @@ declare deps inside `Seq()`:
 ## step 8: the task (style 2)
 declare deps outside `Seq()`:
 
-    private assemblyTask: Initialize[Task[File]] =
+    private def assemblyTask: Initialize[Task[File]] =
       (D1, D2, D3, D4, D5, D6) map {
         (d1, d2, d3, d4, d5, d6) =>
         // returns File
