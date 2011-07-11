@@ -1,6 +1,6 @@
 {
   "title": "beginning sbt0.10",
   "sections": [
-    "plugins", "references"
+    "plugins", "multiprojects", "references"
   ]
 }
