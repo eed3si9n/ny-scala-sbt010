@@ -67,3 +67,11 @@ type `publish-local` in the shell
 ## key-value
 `settings` Seq()
 ![k-v](theory/sbt0.10k-v.png)
+
+!SLIDE
+## key dependencies
+![deps](theory/sbt0.10k-v2.png)
+
+!SLIDE
+
+
