@@ -1,6 +1,6 @@
 {
   "title": "beginning sbt0.10",
   "sections": [
-    "plugins", "multiprojects", "references"
+    "configdsl", "plugins", "multiprojects", "references"
   ]
 }
