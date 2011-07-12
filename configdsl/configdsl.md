@@ -8,17 +8,26 @@ of expressions.
 <br>
 <br>
 
-to use this light-weight config, <br>
+to use this light-weight syntax, <br>
 create a file called `build.sbt` in the root of your project
 
 !SLIDE
 
-## expressions
+## settings and tasks
 <br>
 <br>
- [Settings](http://harrah.github.com/xsbt/latest/api/sbt/Settings.html) are used for general configuration.
+- [Settings](https://github.com/harrah/xsbt/wiki/Settings) describe a configuration 
+which is evaluated at project load time
+  - once the project is loaded, settings and their dependencies are fixed
+- [Tasks](https://github.com/harrah/xsbt/wiki/Tasks) are executed on demand
+  - tasks can be added, changed or removed at execution
+  - use `map` or `flatMap` to pass values from one task to another
 <br>
 <br>
+
+!SLIDE 
+
+## configuration
 
 - [key](http://harrah.github.com/xsbt/latest/sxr/Keys.scala.html)s describe available settings
 - configuration methods initialize and assign 
@@ -37,7 +46,7 @@ create a file called `build.sbt` in the root of your project
 
 !SLIDE
 
-## assigning values
+## bind values
 <br>
 
 `:=` initializes a setting that is
@@ -124,7 +133,8 @@ defaultExcludes ~= (filter => filter || "*~")
 
     resolvers += "name" at "url"
   
-    resolvers ++= Seq("name2" at "url2", "name3" at "url3")
+    resolvers ++= Seq("name2" at "url2", 
+      "name3" at "url3")
 
 
 !SLIDE
@@ -152,4 +162,30 @@ Use `initialCommands` to
 <br>
 
     initialCommands := "import myproject._"
+    
+!SLIDE
+
+## TODO: section on tasks
+
+- tasks without inputs
+- tasks
+
+!SLIDE
+
+## TODO: focus on specific tasks
+
+- how to create a target to run your project code
+  - configure logging for tasks
+- crossbuild for 2.8.1 and 2.9.0-1 (? not exactly sure where this goes)
+- publish jar, source and javadoc
+- how to use test runners: specs2, scalatest
+- other common tasks
+
+!SLIDE
+
+## TODO: talk about scoping?
+
+not sure if Doug will address this in the theory section or it might seem more
+natural in Eugene's multiproject section
+
 
