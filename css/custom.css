@@ -1,6 +1,6 @@
 /* custom styles */
 body {
-  font-family: Optima, Helvetica, Sanserif;  
+  font-family: Optima, Helvetica, Sanserif;
 }
 
 h2 {
@@ -15,14 +15,14 @@ pre {
 blockquote {
   font-family: Georgia, Serif;
   display: block;
-  padding: 0 60px;
+  padding: 1em 60px;
   width: 50%;
 }
 
 blockquote:before, blockquote:after {
-color: #633;
-display: block;
-font-size: 200%;
+  color: #633;
+  display: block;
+  font-size: 200%;
 }
 
 blockquote:before {

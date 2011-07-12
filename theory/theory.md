@@ -1,14 +1,4 @@
 !SLIDE
-# sbt 0.10
-maps and a sea of keys and value bindings
-
-<br>
-[@eed3si9n](https://twitter.com/#!/eed3si9n)
-[@rktoomey](https://twitter.com/#!/rktoomey)
-[@softprops](https://twitter.com/#!/softprops)<br>
-[meetu.ps/2sKqN](http://meetu.ps/2sKqN)
-
-!SLIDE
 ## Part The First
 
 ### a bit of sbt _theory_
@@ -21,25 +11,33 @@ defining a build in terms of [expressions](https://github.com/harrah/xsbt/wiki/S
 
 not *assignments*
 
-
 !SLIDE
 ## Goal: a unified design
 
-    key in scope bindingFn value
+    key in scope bind value
 
 !SLIDE
-## Result:
+## Strategy:
 
-- Almost everything is a Setting[T]
+# Settings!
+
+!SLIDE
+## From a bird's eye
+- Setting[T] produce typed values (simple values, tasks)
 
 - Builds are collections of Settings
 
-- Settings can (`<<=`) other settings result types
+- Settings can (`<<=`) other settings' result types
 
-- More on this later &hellip;
+- Think unix pipes but more flexible and for setting definitions
+
+- More on Settings later &hellip;
 
 !SLIDE
 ## Build it _your_ way
+
+on build sizes and flavors
+
 1. (small) shell
 2. (medium) [Quick](https://github.com/harrah/xsbt/wiki/Basic-Configuration) Configuration
 3. (large) [Full](https://github.com/harrah/xsbt/wiki/Full-Configuration) Configuration
@@ -57,33 +55,62 @@ or &ldquo;manning sbt from your terminal&rdquo;
 
 !SLIDE
 
-## eval
-## inspect
-## show
-## last
+# s/actions/tasks/g
 
 !SLIDE
 
-plus familiar friends
+# new friends
 
-## ~
-## +
-## ++
+## eval (uate an expression)
+## inspect (task doc and deps)
+## show (run task and show output)
+## last (say again?)
 
 !SLIDE
 
+# familiar friends
+
+## ~ (watch and repeat)
+## + (against cross version)
+## ++ (against all cross versions)
+## (compile, clean, ...)
+
+!SLIDE
+## documentation as a feature
+
+!SLIDE
 ## self documenting
 
 `h` is your friend
 
-!SLIDE
-- shell is for running the build
-- Quick Configuration DSL <br>is for defining projects
+    > h h
+    Alias of 'help'
+
+`alias` is also your friend
+
+    > alias q = exit
+    > alias t = test
+    > alias \^@^/ = t
+    > \^@^/
+    > [info] No tests to run.
+    > q
 
 !SLIDE
-- shell is for running the build
-- Quick Configuration DSL <br>is for defining projects
-- Scala code <br>is for advanced stuff
+## self aware
+
+`session` is your passenger
+
+    > h session
+    > Manipulates session settings ...
+    > session list
+    > session save-all
+
+!SLIDE
+## Learn by <strike>doing</strike> playing
+
+!SLIDE
+## Start thinking in terms of key-value
+(insert some web-scale pun)
 
 !SLIDE
 ## key-value
@@ -109,7 +136,7 @@ type `name` in the shell
 type `publish-local` in the shell
 
     > publish-local
-    [info] Packaging /Users/eed3si9n/work/helloworld/target/scala-2.8.1.final/helloworld_2.8.1-0.1-sources.jar ...
+    [info] Packaging .../helloworld_2.8.1-0.1-sources.jar ...
     ...
 
 !SLIDE
@@ -118,10 +145,11 @@ type `publish-local` in the shell
 type `publish-local` in the shell
 
     > publish-local
-    [info] Packaging /Users/eed3si9n/work/helloworld/target/scala-2.8.1.final/helloworld_2.8.1-0.1-sources.jar ...
+    [info] Packaging .../helloworld_2.8.1-0.1-sources.jar ...
     ...
 
 - this is looking up a value from `settings`<br>using the key `publish-local`
+- values can executable functions (tasks)
 
 !SLIDE
 ## key-value
@@ -133,5 +161,4 @@ type `publish-local` in the shell
 ![deps](theory/sbt0.10k-v2.png)
 
 !SLIDE
-
-
+## That's it for the basics
