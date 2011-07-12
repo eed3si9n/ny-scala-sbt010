@@ -1,20 +1,80 @@
 !SLIDE
-# theory of sbt 0.10
+# sbt 0.10
+maps and a sea of keys and value bindings
+
+<br>
+[@eed3si9n](https://twitter.com/#!/eed3si9n)
+[@rktoomey](https://twitter.com/#!/rktoomey)
+[@softprops](https://twitter.com/#!/softprops)<br>
+[meetu.ps/2sKqN](http://meetu.ps/2sKqN)
 
 !SLIDE
-## 3 representations
-1. shell
-2. Quick Configuration DSL
-3. Scala code
+## Part The First
+
+### a bit of sbt _theory_
 
 !SLIDE
-## 3 representations
-1. shell
-2. Quick (aka Light) Configuration DSL
-3. Scala code (aka Full Configuration)
+
+## Build Expressionism<sup>&trade;</sup>
+
+defining a build in terms of [expressions](https://github.com/harrah/xsbt/wiki/Settings)
+
+not *assignments*
+
 
 !SLIDE
-- shell is for running the build
+## Goal: a unified design
+
+    key in scope bindingFn value
+
+!SLIDE
+## Result:
+
+- Almost everything is a Setting[T]
+
+- Builds are collections of Settings
+
+- Settings can (`<<=`) other settings result types
+
+- More on this later &hellip;
+
+!SLIDE
+## Build it _your_ way
+1. (small) shell
+2. (medium) [Quick](https://github.com/harrah/xsbt/wiki/Basic-Configuration) Configuration
+3. (large) [Full](https://github.com/harrah/xsbt/wiki/Full-Configuration) Configuration
+
+!SLIDE
+## In other words
+1. `> eval ... # toe dipping`
+2. `build.sbt # single project`
+3. `build.scala # family of projects`
+
+!SLIDE
+## Ghost in the > shell
+
+or &ldquo;manning sbt from your terminal&rdquo;
+
+!SLIDE
+
+## eval
+## inspect
+## show
+## last
+
+!SLIDE
+
+plus familiar friends
+
+## ~
+## +
+## ++
+
+!SLIDE
+
+## self documenting
+
+`h` is your friend
 
 !SLIDE
 - shell is for running the build
