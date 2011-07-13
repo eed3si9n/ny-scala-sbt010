@@ -3,8 +3,8 @@
 # quick config dsl
 <br>
 <br>
-sbt 0.10 offers a simple way to describe project settings by using a list
-of expressions.
+sbt 0.10 offers a simple way to describe project settings for a single module 
+project by using a list of expressions.
 <br>
 <br>
 
@@ -301,13 +301,14 @@ By default, sbt 0.10 will publish
 - the main binary jar
 - a source jar
 - API documentation jar
+- a Maven pom
+<br>
 <br>
 
-    publishTo := Some("Novus Repo" 
-      at "http://repo.novus.org/content/repositories/releases/")
-
-<br>
-`publish-maven-style`, `true` by default, generates a pom.
+<pre>
+publishTo := Some("XYZ Repo" 
+  at "http://repo.xyz.org/releases/")
+</pre>
 
 !SLIDE
 
@@ -343,16 +344,15 @@ or inline
 use `pomExtra` to provide XML (`scala.xml.NodeSeq`)
 <br>
 <br>
-<pre>
-pomExtra := 
-<licenses>
-  <license>
-    <name>Apache 2</name>
-    <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-    <distribution>repo</distribution>
-  </license>
-</licenses>
-</pre>
+
+    pomExtra := 
+    <licenses>
+      <license>
+        <name>Apache 2</name>
+        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        <distribution>repo</distribution>
+      </license>
+    </licenses>
 
 !SLIDE
 
