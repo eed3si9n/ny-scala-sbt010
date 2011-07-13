@@ -7,14 +7,14 @@
 
 ## Build Expressionism<sup>&trade;</sup>
 
-defining a build in terms of [expressions](https://github.com/harrah/xsbt/wiki/Settings)
+defining a build in terms of typesafe [expressions](https://github.com/harrah/xsbt/wiki/Settings)
 
-not *assignments*
+not inheritance hierarchies or xml
 
 !SLIDE
 ## Goal: a unified design
 
-    key in scope bind value
+    key in scope bind (dependencies) value
 
 !SLIDE
 ## Strategy:
@@ -23,7 +23,7 @@ not *assignments*
 
 !SLIDE
 ## From a bird's eye
-- Setting[T] produce typed values (simple values, tasks)
+- Setting[T] produces typed values (simple values, tasks)
 
 - Builds are collections of Settings
 
@@ -44,7 +44,7 @@ on build sizes and flavors
 
 !SLIDE
 ## In other words
-1. `> eval ... # toe dipping`
+1. `> eval expression # toe dipping`
 2. `build.sbt # single project`
 3. `build.scala # family of projects`
 
@@ -109,7 +109,7 @@ or &ldquo;manning sbt from your terminal&rdquo;
 ## Learn by <strike>doing</strike> playing
 
 !SLIDE
-## Start thinking in terms of key-value
+## Start thinking in terms of [key](https://github.com/harrah/xsbt/blob/0.10/main/Keys.scala)-[value](https://github.com/harrah/xsbt/blob/0.10/main/Defaults.scala)
 (insert some web-scale pun)
 
 !SLIDE
@@ -153,12 +153,46 @@ type `publish-local` in the shell
 
 !SLIDE
 ## key-value
-`settings` Seq()
+
+`settings` is a Seq of `Setting[T]`
+
 ![k-v](theory/sbt0.10k-v.png)
 
 !SLIDE
-## key dependencies
+## keys can declare their independence
+### (`:=`) context free
+
+## or their dependencies on other keys (`<*`)
 ![deps](theory/sbt0.10k-v2.png)
+
+!SLIDE
+## An Emoji for just about every occasion
+
+# ([:=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L177)), ([::=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L176)), ([:==](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L178)) ([+=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L132)), ([++=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L133)), ([<+=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L130)), ([<++=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L131)), ([<<=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L156)), ([~=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L179)), ([??](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L162)), `(~_~)' &hellip;
+
+!SLIDE
+## A quick rule of thumb on
+## TasksKeys and TettingKeys with dependencies
+
+!SLIDE
+# SettingKeys _apply_
+
+    val whichVersion = SettingKey[String]("which-version","...")
+    override def settings = Seq(
+      whichVersion <<= scalaVersion.apply(v =>
+        "mah scala version is %s" format v
+      )
+    )
+
+!SLIDE
+# TaskKeys _map_
+
+    val ohai = TaskKey[Unit]("ohai","prints ohai")
+    override def settings = Seq(
+       ohai <<= (streams) map { (out) =>
+         out.log.info("ohai!")
+       }
+    )
 
 !SLIDE
 ## That's it for the basics
