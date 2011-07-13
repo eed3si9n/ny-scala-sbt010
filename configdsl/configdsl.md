@@ -3,8 +3,8 @@
 # quick config dsl
 <br>
 <br>
-sbt 0.10 offers a simple way to describe project settings by using a list
-of expressions.
+sbt 0.10 offers a simple way to describe project settings for a single module 
+project by using a list of expressions.
 <br>
 <br>
 
@@ -13,17 +13,28 @@ create a file called `build.sbt` in the root of your project
 
 !SLIDE
 
-## settings and tasks
+## settings
 <br>
-<br>
-- [Settings](https://github.com/harrah/xsbt/wiki/Settings) describe a configuration 
+[Settings](https://github.com/harrah/xsbt/wiki/Settings) describe a configuration 
 which is evaluated at project load time
-  - once the project is loaded, settings and their dependencies are fixed
-- [Tasks](https://github.com/harrah/xsbt/wiki/Tasks) are executed on demand
-  - tasks can be added, changed or removed at execution
-  - use `map` or `flatMap` to pass values from one task to another
-  - may have external dependencies
-  - may have side effects
+<br>
+<br>
+
+- once the project is loaded, settings and their dependencies are fixed
+
+!SLIDE
+
+## tasks
+<br>
+[Tasks](https://github.com/harrah/xsbt/wiki/Tasks) are executed on demand
+<br>
+<br>
+
+-  tasks can be added, changed or removed at execution
+-  use `map` or `flatMap` to pass values from one task to another
+-  may have external dependencies
+-  may have side effects
+
 
 !SLIDE
 
@@ -36,12 +47,13 @@ which is evaluated at project load time
 
 - [harrah/xsbt/wiki/Index](https://github.com/harrah/xsbt/wiki/Index)<br>
 - [Keys](http://harrah.github.com/xsbt/latest/sxr/Keys.scala.html) describe available settings
+
 <br>
 <br>
+
 - methods ending in `=` intialize
 - methods beginning with `<` depend on other values
 - no semi-colons at the end of lines
-- parentheses are not required except when using a function with `~=`
 
 !SLIDE
 
@@ -49,22 +61,32 @@ which is evaluated at project load time
 <br>
 
 `:=` initializes a setting that is
+<br>
+<br>
 
 - a constant value
 - does not depend on any other settings
 - will silently overwrite a previously defined value with the same key
 
+
 !SLIDE
 
 ## initial setup
-
-These settings should look familiar from `build.properties` used by sbt 0.7x. 
 <br>
+start with these settings in `build.sbt`
+<br>
+
     organization := "myproject"
     name := "My Project"
     version := "0.1"
     scalaVersion := "2.9.0-1"
-    sbtVersion := "0.10"
+
+<br>
+and specify sbt 0.10 in `build.properties`:
+<br>
+
+    sbt.version=0.10.0
+
 
 !SLIDE
 
@@ -72,19 +94,23 @@ These settings should look familiar from `build.properties` used by sbt 0.7x.
 <br>
 use `+=` to append one dependency, or `++=` to append a `Seq` of multiple dependencies.
 <br>
-<br>      
+<br> 
+
     libraryDependencies += "org.xyz" %% "xyz" % "2.1"
 
     libraryDependencies ++= Seq(
-	    "net.databinder" %% "dispatch-meetup" % "0.7.8",
-	    "net.databinder" %% "dispatch-twitter" % "0.7.8"
+      "net.databinder" %% "dispatch-meetup" % "0.7.8",
+      "net.databinder" %% "dispatch-twitter" % "0.7.8"
     )
+
     
 !SLIDE
 
 ## settings that use other settings
-<br>      
+<br> 
+
     libraryDependencies += "org.xyz" %% "xyz" % "2.1"
+
 <br>
 is the same as using `<<=` to call apply to update the previous value of 
 `libraryDependencies` with another `ModuleID`  
@@ -94,19 +120,22 @@ is the same as using `<<=` to call apply to update the previous value of
       deps :+ "org.xyz" %% "xyz" % "2.1"
     }
 
-
 !SLIDE
 
 ## dependencies that use scala version
 <br>
-`scalaVersion` is itself a Setting, so you need to combine an append operator with
+
+`scalaVersion` is itself a setting, so you need to combine an append operator with
 the `<<=` operator:
-- `<+=` combines `+=` and `<<=` 
-- `<++=` combines `++=` and `<<=`
+<br>
+
+-  `<+=` combines `+=` and `<<=` 
+-  `<++=` combines `++=` and `<<=`
 
 <br>
-<br>
-    libraryDependencies <+= scalaVersion( "org.scala-lang" % "scala-compiler" % _ )
+
+    libraryDependencies <+= scalaVersion( "org.scala-lang" 
+      % "scala-compiler" % _ )
     
     libraryDependencies <++= scalaVersion { sv =>
       ("org.scala-lang" % "scala-compiler" % sv) ::
@@ -117,8 +146,13 @@ the `<<=` operator:
 !SLIDE
 
 ## unmanaged dependencies
+<br>
+use `unmanagedJars` to take care of unmanaged dependencies:
+<br>
+<br>
 
-    unmanagedJars in Compile += file("/home/rose/myproject/lib/some.jar")
+    unmanagedJars in Compile 
+      += file("/home/rose/myproject/lib/some.jar")
 
 !SLIDE
 
@@ -134,20 +168,8 @@ Java:
 <br>
 Scala:
 <br>
+
     scalacOptions ++= Seq("-deprecation", "-unchecked")
-    
-!SLIDE
-
-## filtering
-<br>
-The `~=` operator applies a function `F => F` to a value.
-
-- the parentheses are required
-<br>
-<br>
-<pre>
-defaultExcludes ~= (filter => filter || "*~")
-</pre>
 
 !SLIDE
 
@@ -158,6 +180,60 @@ defaultExcludes ~= (filter => filter || "*~")
   
     resolvers ++= Seq("name2" at "url2", 
       "name3" at "url3")
+
+!SLIDE
+
+## define plugins
+<br>
+create `myproject/project/plugins/build.sbt`:
+<br>
+<br>
+
+    resolvers += "Some plugin repo" 
+      at "http://someplugin.github.com/maven2"
+
+    libraryDependencies <+= 
+      sbtVersion("com.github.someplugin" 
+        %% "some-plugin" % _)
+
+
+!SLIDE
+
+## use plugins
+<br>
+at the top of `build.sbt`, add the imports:
+
+    import grizzled.sys._
+    import OperatingSystem._
+
+    libraryDependencies ++=
+	    if (os ==Windows)
+		    ("org.example" % "windows-only" 
+		        % "1.0") :: Nil
+	    else
+		    Nil
+      
+!SLIDE
+
+## bring plugin settings into scope
+<br>
+at the top of `build.sbt`, import the plugin settings:
+<br>
+<br>
+
+    seq(SomePlugin.someSettings :_*)
+    
+    someSetting := "foo"
+
+!SLIDE
+
+# cool new features
+
+!SLIDE
+
+## custom prompts
+
+TODO
 
 !SLIDE
 
@@ -181,7 +257,7 @@ Use `initialCommands` to
 
 ## task dependencies
 
-
+TODO
 
 !SLIDE
 
@@ -207,18 +283,18 @@ By default, sbt 0.10 will publish
 - the main binary jar
 - a source jar
 - API documentation jar
+- a Maven pom
+<br>
 <br>
 
-    publishTo := Some("Novus Repo" 
-      at "http://repo.novus.org/content/repositories/releases/")
-
-<br>
-`publish-maven-style`, `true` by default, generates a pom.
+<pre>
+publishTo := Some("XYZ Repo" 
+  at "http://repo.xyz.org/releases/")
+</pre>
 
 !SLIDE
 
 ## define credentials
-<br>
 <br>
 using a file
 
@@ -233,9 +309,10 @@ or inline
 !SLIDE
 
 ## publish snapshots and releases
+<br>
 
     publishTo <<= (version) { version: String =>
-      val nexus = "http://repo.novus.org/content/repositories/"
+      val nexus = "http://xyz.org/content/repositories/"
       if (version.trim.endsWith("SNAPSHOT")) 
         Some("snapshots" at nexus+"snapshots/") 
       else                                   
@@ -245,23 +322,24 @@ or inline
 !SLIDE
 
 ## customize the published pom
+<br>
+use `pomExtra` to provide XML (`scala.xml.NodeSeq`)
+<br>
+<br>
 
-Add an 
-
-<pre>
-pomExtra := 
-<licenses>
-  <license>
-    <name>Apache 2</name>
-    <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-    <distribution>repo</distribution>
-  </license>
-</licenses>
-</pre>
+    pomExtra := 
+    <licenses>
+      <license>
+        <name>Apache 2</name>
+        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        <distribution>repo</distribution>
+      </license>
+    </licenses>
 
 !SLIDE
 
-## these projects use quick config dsl
+## projects that use quick config dsl
 
-- [eed3si9n/scalaxb/build.sbt][https://github.com/eed3si9n/scalaxb/blob/master/build.sbt]
+- [eed3si9n/scalaxb/build.sbt](https://github.com/eed3si9n/scalaxb/blob/master/build.sbt)
 - [specs2.sbt](https://github.com/etorreborre/specs2/blob/1.6/specs2.sbt)
+- [jdegoes/blueeyes/build.sbt](https://github.com/jdegoes/blueeyes/blob/master/build.sbt)
