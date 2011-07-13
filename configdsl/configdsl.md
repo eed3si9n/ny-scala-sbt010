@@ -3,57 +3,113 @@
 # quick config dsl
 <br>
 <br>
-sbt 0.10 offers a simple way to describe project settings for a single module 
-project by using a list of expressions.
-<br>
-<br>
-
-to use this light-weight syntax, <br>
-create a file called `build.sbt` in the root of your project
+a simple way to describe single module projects as a list of expressions
 
 !SLIDE
 
-## settings
+## where
 <br>
-[Settings](https://github.com/harrah/xsbt/wiki/Settings) describe a configuration 
-which is evaluated at project load time
+
+in the root directory of your project
 <br>
 <br>
 
-- once the project is loaded, settings and their dependencies are fixed
+    // settings and tasks go here
+    build.sbt
+    
+    // define the sbt version here
+    project/build.properties
+    
+    // plugins go here
+    project/plugins/build.sbt
 
 !SLIDE
 
-## tasks
+## build.sbt
+
+start with these settings in `build.sbt`
 <br>
-[Tasks](https://github.com/harrah/xsbt/wiki/Tasks) are executed on demand
+
+    organization := "com.foo"
+    name := "bar"
+    version := "0.0.1"
+    scalaVersion := "2.9.0-1"
+
+!SLIDE
+
+## build.properties
+
+this is all you need in `project/build.properties`
 <br>
 <br>
 
--  tasks can be added, changed or removed at execution
+    sbt.version=0.10.0
+
+!SLIDE
+
+## setting or task?
+
+> if it can be cached, it's a setting
+
+<br>
+<br>
+
+> if it depends on your project, it's a task
+
+!SLIDE
+
+## how do settings work?
+<br>
+<br>
+
+[Settings](https://github.com/harrah/xsbt/wiki/Settings) are evaluated at project load time and on reload.
+<br>
+<br>
+
+once the project is loaded, the dependencies are fixed.
+
+!SLIDE
+
+## how are tasks different from settings?
+<br>
+
+-  [Tasks](https://github.com/harrah/xsbt/wiki/Tasks) can be added, changed or removed at execution
+-  execute on demand
 -  use `map` or `flatMap` to pass values from one task to another
 -  may have external dependencies
 -  may have side effects
 
+!SLIDE
+
+# syntax
+
+> everything is parsed as an expression
+
 
 !SLIDE
 
-# configure
+## field guide
 
-!SLIDE
-
-## field guide to configuration methods
-<br>
-
-- [harrah/xsbt/wiki/Index](https://github.com/harrah/xsbt/wiki/Index)<br>
 - [Keys](http://harrah.github.com/xsbt/latest/sxr/Keys.scala.html) describe available settings
+- the [harrah/xsbt/wiki/Index](https://github.com/harrah/xsbt/wiki/Index) of practically just about everything
 
 <br>
 <br>
 
-- methods ending in `=` intialize
-- methods beginning with `<` depend on other values
-- no semi-colons at the end of lines
+- operators ending in `=` intialize
+- operators beginning with `<` depend on other values
+- no semi-colons are allowed at the end of lines
+- use curly braces to scope or pass a function as a setting value
+
+!SLIDE
+
+## initializing
+<br>
+
+- `<<=` is the most general initialization operator 
+- it declares a dependency and passes the right-hand value or method result to 
+the setting represented by the left-hand key
+- every other initialization operator can be defined in terms of `<<=`
 
 !SLIDE
 
@@ -68,7 +124,6 @@ which is evaluated at project load time
 - does not depend on any other settings
 - will silently overwrite a previously defined value with the same key
 
-
 !SLIDE
 
 ## initial setup
@@ -76,8 +131,8 @@ which is evaluated at project load time
 start with these settings in `build.sbt`
 <br>
 
-    organization := "myproject"
-    name := "My Project"
+    organization := "org.myproject"
+    name := "something"
     version := "0.1"
     scalaVersion := "2.9.0-1"
 
@@ -87,6 +142,20 @@ and specify sbt 0.10 in `build.properties`:
 
     sbt.version=0.10.0
 
+
+!SLIDE
+
+# dependencies
+
+!SLIDE
+
+## adding maven repos
+<br>
+
+    resolvers += "name" at "url"
+  
+    resolvers ++= Seq("name2" at "url2", 
+      "name3" at "url3")
 
 !SLIDE
 
@@ -106,14 +175,16 @@ use `+=` to append one dependency, or `++=` to append a `Seq` of multiple depend
     
 !SLIDE
 
-## settings that use other settings
+## dependencies are settings that update other settings
 <br> 
 
     libraryDependencies += "org.xyz" %% "xyz" % "2.1"
 
 <br>
+<br>
 is the same as using `<<=` to call apply to update the previous value of 
 `libraryDependencies` with another `ModuleID`  
+<br>
 <br>
 
     libraryDependencies <<= libraryDependencies { deps =>
@@ -154,6 +225,7 @@ use `unmanagedJars` to take care of unmanaged dependencies:
     unmanagedJars in Compile 
       += file("/home/rose/myproject/lib/some.jar")
 
+
 !SLIDE
 
 ## compiler options
@@ -171,59 +243,6 @@ Scala:
 
     scalacOptions ++= Seq("-deprecation", "-unchecked")
 
-!SLIDE
-
-## add maven repos
-<br>
-
-    resolvers += "name" at "url"
-  
-    resolvers ++= Seq("name2" at "url2", 
-      "name3" at "url3")
-
-!SLIDE
-
-## define plugins
-<br>
-create `myproject/project/plugins/build.sbt`:
-<br>
-<br>
-
-    resolvers += "Some plugin repo" 
-      at "http://someplugin.github.com/maven2"
-
-    libraryDependencies <+= 
-      sbtVersion("com.github.someplugin" 
-        %% "some-plugin" % _)
-
-
-!SLIDE
-
-## use plugins
-<br>
-at the top of `build.sbt`, add the imports:
-
-    import grizzled.sys._
-    import OperatingSystem._
-
-    libraryDependencies ++=
-	    if (os ==Windows)
-		    ("org.example" % "windows-only" 
-		        % "1.0") :: Nil
-	    else
-		    Nil
-      
-!SLIDE
-
-## bring plugin settings into scope
-<br>
-at the top of `build.sbt`, import the plugin settings:
-<br>
-<br>
-
-    seq(SomePlugin.someSettings :_*)
-    
-    someSetting := "foo"
 
 !SLIDE
 
@@ -232,43 +251,61 @@ at the top of `build.sbt`, import the plugin settings:
 !SLIDE
 
 ## custom prompts
+<br>
+Use `shellPrompt` to customise your sbt prompt.  This example sets your shell prompt 
+to the name of the project (not very exciting for a single module project, but...)
+<br>
+<br>
 
-TODO
+    shellPrompt := { state => 
+        Project.extract(state).currentRef.project + "> " }
 
 !SLIDE
 
 ## initial commands in console
 <br>
-Use `initialCommands` to
+Use `initialCommands`
+
   - limit scope with `in console` or `in console-quick` 
 <br>
 <br>
 
+<pre>
     initialCommands := "import myproject._"
-    
-!SLIDE
-
-## TODO: section on tasks
-
-- tasks without inputs
-- tasks
+</pre>    
 
 !SLIDE
 
-## task dependencies
+## console-project
+<br>
+[Console-Project](https://github.com/harrah/xsbt/wiki/Console-Project) lets you use the DSL to 
+interact with your project:
+<br>
+<br>
 
-TODO
+- see and modify configuration values
+- evaluate tasks (use `currentState` - see [Build State](https://github.com/harrah/xsbt/wiki/Build-State)) for more
+    - show the classpaths for compilation and testing
+    - show available or remaining commands
 
 !SLIDE
 
-## TODO: focus on specific tasks
+# testing
 
-- how to create a target to run your project code
-  - configure logging for tasks
-- crossbuild for 2.8.1 and 2.9.0-1 (? not exactly sure where this goes)
-- publish jar, source and javadoc
-- how to use test runners: specs2, scalatest
-- other common tasks
+!SLIDE
+
+## supported out of box
+
+- specs2
+- ScalaCheck
+- ScalaTest
+
+<br>
+<br>
+
+## needs a plugin
+
+- JUnit
 
 !SLIDE
 
@@ -319,22 +356,6 @@ or inline
         Some("releases" at nexus+"releases/")
     }
 
-!SLIDE
-
-## customize the published pom
-<br>
-use `pomExtra` to provide XML (`scala.xml.NodeSeq`)
-<br>
-<br>
-
-    pomExtra := 
-    <licenses>
-      <license>
-        <name>Apache 2</name>
-        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        <distribution>repo</distribution>
-      </license>
-    </licenses>
 
 !SLIDE
 

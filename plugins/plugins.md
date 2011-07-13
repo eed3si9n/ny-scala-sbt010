@@ -53,8 +53,50 @@ doesn't make much sense until you use it.
 
 in project/plugins/built.sbt
 
+    // add resolver, if necessary
+    resolvers += "Some plugin repo" 
+      at "http://someplugin.github.com/maven2"
+
     libraryDependencies += "com.eed3si9n" %%
       "sbt-assembly" % "0.2"
+
+!SLIDE
+
+## using plugins versioned by sbt version
+
+    libraryDependencies <+= 
+      sbtVersion("com.github.someplugin" 
+        %% "some-plugin" % _)
+
+
+!SLIDE
+
+## using 0.10 plugins in your project
+<br>
+at the top of `build.sbt`, add the imports:
+
+    import grizzled.sys._
+    import OperatingSystem._
+    
+    // now do stuff with the plugin...
+    libraryDependencies ++=
+	    if (os ==Windows)
+		    ("org.example" % "windows-only" 
+		        % "1.0") :: Nil
+	    else
+		    Nil
+      
+!SLIDE
+
+## bring plugin settings into scope
+<br>
+at the top of `build.sbt`, import the plugin settings:
+<br>
+<br>
+
+    seq(SomePlugin.someSettings :_*)
+    
+    someSetting := "foo"
 
 !SLIDE
 ## using 0.10 plugins
