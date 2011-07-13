@@ -340,6 +340,6 @@ use `pomExtra` to provide XML (`scala.xml.NodeSeq`)
 
 ## projects that use quick config dsl
 
-- [eed3si9n/scalaxb/build.sbt](https://github.com/eed3si9n/scalaxb/blob/master/build.sbt)
 - [specs2.sbt](https://github.com/etorreborre/specs2/blob/1.6/specs2.sbt)
 - [jdegoes/blueeyes/build.sbt](https://github.com/jdegoes/blueeyes/blob/master/build.sbt)
+- [eed3si9n/sbt-assembly/build.sbt](https://github.com/eed3si9n/sbt-assembly/blob/sbt0.10/build.sbt)
