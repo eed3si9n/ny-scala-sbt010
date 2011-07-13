@@ -54,8 +54,6 @@ which is evaluated at project load time
 - methods ending in `=` intialize
 - methods beginning with `<` depend on other values
 - no semi-colons at the end of lines
-- parentheses not required except for using a function with `~=`
-
 
 !SLIDE
 
@@ -172,22 +170,6 @@ Scala:
 <br>
 
     scalacOptions ++= Seq("-deprecation", "-unchecked")
-    
-!SLIDE
-
-## filtering
-<br>
-The `~=` operator applies a function `F => F` to a value.
-
-- the parentheses are required
-<br>
-<br>
-<pre>
-defaultExcludes ~= (filter => filter || "*~")
-</pre>
-<br>
-<br>
-TODO: needs more explanation
 
 !SLIDE
 
