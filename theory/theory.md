@@ -171,8 +171,8 @@ type `publish-local` in the shell
 # ([:=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L177)), ([::=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L176)), ([:==](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L178)) ([+=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L132)), ([++=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L133)), ([<+=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L130)), ([<++=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L131)), ([<<=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L156)), ([~=](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L179)), ([??](https://github.com/harrah/xsbt/blob/0.10/main/Structure.scala#L162)), `(~_~)' &hellip;
 
 !SLIDE
-## A quick rule of thumb on
-## TasksKeys and TettingKeys with dependencies
+## A quick rule of thumb regarding
+## TasksKeys and SettingKeys with dependencies
 
 !SLIDE
 # SettingKeys _apply_
@@ -189,8 +189,8 @@ type `publish-local` in the shell
 
     val ohai = TaskKey[Unit]("ohai","prints ohai")
     override def settings = Seq(
-       ohai <<= (streams) map { (out) =>
-         out.log.info("ohai!")
+       ohai <<= (streams, version) map { (out, vers) =>
+         out.log.info("ohai %s!" format vers)
        }
     )
 
