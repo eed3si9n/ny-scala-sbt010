@@ -22,21 +22,20 @@ which is evaluated at project load time
 - [Tasks](https://github.com/harrah/xsbt/wiki/Tasks) are executed on demand
   - tasks can be added, changed or removed at execution
   - use `map` or `flatMap` to pass values from one task to another
-<br>
-<br>
+  - may have external dependencies
+  - may have side effects
 
-!SLIDE 
+!SLIDE
 
-## configuration
-
-- [key](http://harrah.github.com/xsbt/latest/sxr/Keys.scala.html)s describe available settings
-- configuration methods initialize and assign 
+# configure
 
 !SLIDE
 
 ## field guide to configuration methods
 <br>
-[harrah/xsbt/wiki/Index](https://github.com/harrah/xsbt/wiki/Index)
+
+- [harrah/xsbt/wiki/Index](https://github.com/harrah/xsbt/wiki/Index)<br>
+- [Keys](http://harrah.github.com/xsbt/latest/sxr/Keys.scala.html) describe available settings
 <br>
 <br>
 - methods ending in `=` intialize
@@ -46,7 +45,7 @@ which is evaluated at project load time
 
 !SLIDE
 
-## bind values
+## assign values
 <br>
 
 `:=` initializes a setting that is
@@ -54,22 +53,24 @@ which is evaluated at project load time
 - a constant value
 - does not depend on any other settings
 - will silently overwrite a previously defined value with the same key
-<br>
-<br>
 
-<pre>
+!SLIDE
+
+## initial setup
+
+These settings should look familiar from `build.properties` used by sbt 0.7x. 
+<br>
+    organization := "myproject"
     name := "My Project"
     version := "0.1"
-    organization := "myproject"
     scalaVersion := "2.9.0-1"
-    publishTo := Some("name" at "url")
-<pre/>
+    sbtVersion := "0.10"
 
 !SLIDE
 
 ## adding dependencies
 <br>
-`+=` and `++=` append to a sequence
+use `+=` to append one dependency, or `++=` to append a `Seq` of multiple dependencies.
 <br>
 <br>      
     libraryDependencies += "org.xyz" %% "xyz" % "2.1"
@@ -115,6 +116,28 @@ the `<<=` operator:
 
 !SLIDE
 
+## unmanaged dependencies
+
+    unmanagedJars in Compile += file("/home/rose/myproject/lib/some.jar")
+
+!SLIDE
+
+## compiler options
+<br>
+Java:
+<br>
+
+    javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
+    javaOptions += "-Xms512M -Xmx2G"
+    
+<br>
+<br>
+Scala:
+<br>
+    scalacOptions ++= Seq("-deprecation", "-unchecked")
+    
+!SLIDE
+
 ## filtering
 <br>
 The `~=` operator applies a function `F => F` to a value.
@@ -136,22 +159,6 @@ defaultExcludes ~= (filter => filter || "*~")
     resolvers ++= Seq("name2" at "url2", 
       "name3" at "url3")
 
-
-!SLIDE
-
-## define credentials
-<br>
-<br>
-using a file
-
-    credentials += Credentials(Path.userHome / ".ivy2" / 
-      ".credentials")
-<br>
-or inline 
-
-    credentials += Credentials("Some Repo", "myproject.org", 
-      "admin", "admin123")
-
 !SLIDE
 
 ## initial commands in console
@@ -172,6 +179,12 @@ Use `initialCommands` to
 
 !SLIDE
 
+## task dependencies
+
+
+
+!SLIDE
+
 ## TODO: focus on specific tasks
 
 - how to create a target to run your project code
@@ -183,9 +196,72 @@ Use `initialCommands` to
 
 !SLIDE
 
-## TODO: talk about scoping?
+# publish
 
-not sure if Doug will address this in the theory section or it might seem more
-natural in Eugene's multiproject section
+!SLIDE
 
+## publish
+<br>
+By default, sbt 0.10 will publish
 
+- the main binary jar
+- a source jar
+- API documentation jar
+<br>
+
+    publishTo := Some("Novus Repo" 
+      at "http://repo.novus.org/content/repositories/releases/")
+
+<br>
+`publish-maven-style`, `true` by default, generates a pom.
+
+!SLIDE
+
+## define credentials
+<br>
+<br>
+using a file
+
+    credentials += Credentials(Path.userHome / ".ivy2" / 
+      ".credentials")
+<br>
+or inline 
+
+    credentials += Credentials("Some Repo", "myproject.org", 
+      "admin", "admin123")
+
+!SLIDE
+
+## publish snapshots and releases
+
+    publishTo <<= (version) { version: String =>
+      val nexus = "http://repo.novus.org/content/repositories/"
+      if (version.trim.endsWith("SNAPSHOT")) 
+        Some("snapshots" at nexus+"snapshots/") 
+      else                                   
+        Some("releases" at nexus+"releases/")
+    }
+
+!SLIDE
+
+## customize the published pom
+
+Add an 
+
+<pre>
+pomExtra := 
+<licenses>
+  <license>
+    <name>Apache 2</name>
+    <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    <distribution>repo</distribution>
+  </license>
+</licenses>
+</pre>
+
+!SLIDE
+
+## these projects use quick config dsl
+
+- [eed3si9n/scalaxb/build.sbt][https://github.com/eed3si9n/scalaxb/blob/master/build.sbt]
+- [specs2.sbt](https://github.com/etorreborre/specs2/blob/1.6/specs2.sbt)
