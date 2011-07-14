@@ -25,8 +25,8 @@ doesn't make much sense until you use it.
 
 - [mpeltonen/sbt-idea](https://github.com/mpeltonen/sbt-idea/tree/sbt-0.10)
 - [siasia/xsbt-web-plugin](https://github.com/siasia/xsbt-web-plugin)
-- [eed3si9n/sbt-appengine](https://github.com/eed3si9n/sbt-appengine)
-- [eed3si9n/sbt-assembly](https://github.com/eed3si9n/sbt-assembly)
+- [eed3si9n/sbt-appengine](https://github.com/eed3si9n/sbt-appengine) originally [Yasushi/sbt-appengine-plugin](https://github.com/Yasushi/sbt-appengine-plugin) 
+- [eed3si9n/sbt-assembly](https://github.com/eed3si9n/sbt-assembly) originally [codahale/assembly-sbt](https://github.com/codahale/assembly-sbt)
 - [softprops/coffeescripted-sbt](https://github.com/softprops/coffeescripted-sbt)
 - [n8han/posterous-sbt](https://github.com/n8han/posterous-sbt/tree/sbt0.10)
 - [steppenwells/sbt-sh](https://github.com/steppenwells/sbt-sh)

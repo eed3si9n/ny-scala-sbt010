@@ -9,6 +9,7 @@
 !SLIDE
 ## acknowledgements
 - thanx Novus Partner for hosting this meetup!
+- thanx Coda Hale for assembly-sbt
 - thanx Mark Harrah for
 1. writing sbt 0.7 and 0.10
 2. demoing the stuff
