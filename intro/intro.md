@@ -3,7 +3,8 @@
 maps and a sea of keys and value bindings
 
 <br>
-[@eed3si9n](https://twitter.com/#!/eed3si9n)
-[@prasinous](https://twitter.com/#!/prasinous)
-[@softprops](https://twitter.com/#!/softprops)<br>
-[meetu.ps/2sKqN](http://meetu.ps/2sKqN)
+
+- doug tangren [@softprops](https://twitter.com/#!/softprops)
+- rose toomey [@prasinous](https://twitter.com/#!/prasinous)
+- eugene yokota [@eed3si9n](https://twitter.com/#!/eed3si9n)
+- [meetu.ps/2sKqN](http://meetu.ps/2sKqN)

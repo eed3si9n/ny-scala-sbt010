@@ -14,3 +14,8 @@
 1. writing sbt 0.7 and 0.10
 2. demoing the stuff
 3. answering all the questions on the mailing list
+
+!SLIDE
+## acknowledgements
+- these slides were made using [softprops/picture-show](https://github.com/softprops/picture-show)
+- [view source](https://github.com/eed3si9n/ny-scala-sbt010)
