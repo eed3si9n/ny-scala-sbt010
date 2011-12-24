@@ -14,4 +14,5 @@
 - doug tangren [@softprops](https://twitter.com/#!/softprops)
 - rose toomey [@prasinous](https://twitter.com/#!/prasinous)
 - eugene yokota [@eed3si9n](https://twitter.com/#!/eed3si9n)
+
 of [ny-scala](http://www.meetup.com/ny-scala/)
